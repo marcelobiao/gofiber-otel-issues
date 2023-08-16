@@ -1,0 +1,37 @@
+version: '3.0'  
+services:
+  go-app:
+    build:
+      context: "."
+      dockerfile: Dockerfile
+    container_name: "go-app-${PROJECT_NAME}"
+    ports:
+      - 8080:8080
+      - 8081:8081
+    depends_on:
+      - mongodb
+      - zipkin
+    networks:
+      - local-network
+
+  mongodb:
+    container_name: "mongo-${PROJECT_NAME}"
+    image: "mongo:4"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: test
+      MONGO_INITDB_ROOT_PASSWORD: test
+    ports:
+      - "27017:27017"
+    networks:
+      - local-network
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: "zipkin-${PROJECT_NAME}"
+    ports:
+      - 9411:9411
+    networks:
+      - local-network
+
+networks:
+  local-network:
